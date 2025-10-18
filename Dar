@@ -1,0 +1,1171 @@
+<!DOCTYPE html>
+<html lang="ku" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سیستم رزرواسیون سەفەر</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --light-color: #ecf0f1;
+            --dark-color: #2c3e50;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            background-size: 400% 400%;
+            animation: gradient 15s ease infinite;
+            color: var(--light-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: rgba(44, 62, 80, 0.9);
+            padding: 15px 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--light-color);
+        }
+
+        .settings {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .language-selector select {
+            background-color: var(--dark-color);
+            color: var(--light-color);
+            border: 1px solid var(--secondary-color);
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logout-btn {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        /* Login Form Styles */
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-grow: 1;
+            padding: 40px 20px;
+        }
+
+        .login-form {
+            background-color: rgba(44, 62, 80, 0.9);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .login-form h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: var(--light-color);
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            background-color: rgba(255, 255, 255, 0.9);
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 10px;
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        .login-btn:hover {
+            background-color: #2980b9;
+        }
+
+        .register-link {
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .register-link a {
+            color: var(--secondary-color);
+            text-decoration: none;
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            display: none;
+            flex-grow: 1;
+            padding: 20px 0;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background-color: rgba(44, 62, 80, 0.9);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .card h3 {
+            margin-bottom: 15px;
+            color: var(--secondary-color);
+            border-bottom: 1px solid var(--secondary-color);
+            padding-bottom: 10px;
+        }
+
+        /* Form Styles */
+        .booking-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .form-control {
+            margin-bottom: 15px;
+        }
+
+        .form-control label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .form-control input,
+        .form-control select {
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            background-color: rgba(255, 255, 255, 0.9);
+        }
+
+        .form-control.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .submit-btn {
+            grid-column: 1 / -1;
+            padding: 12px;
+            background-color: var(--success-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        .submit-btn:hover {
+            background-color: #219653;
+        }
+
+        /* Admin Panel Styles */
+        .admin-panel {
+            display: none;
+        }
+
+        .admin-controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .admin-btn {
+            padding: 8px 15px;
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .price-controls {
+            background-color: rgba(44, 62, 80, 0.9);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .price-controls h3 {
+            margin-bottom: 15px;
+            color: var(--secondary-color);
+        }
+
+        .price-inputs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .price-input {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .price-input label {
+            margin-bottom: 5px;
+        }
+
+        .price-input input {
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            background-color: rgba(255, 255, 255, 0.9);
+        }
+
+        .update-prices-btn {
+            margin-top: 15px;
+            padding: 10px;
+            background-color: var(--success-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .requests-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .requests-table th,
+        .requests-table td {
+            padding: 12px 15px;
+            text-align: right;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .requests-table th {
+            background-color: rgba(52, 152, 219, 0.3);
+        }
+
+        .requests-table tr:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        /* User Dashboard Styles */
+        .user-dashboard {
+            display: none;
+        }
+
+        .price-display {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .price-card {
+            background-color: rgba(44, 62, 80, 0.9);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .price-card h4 {
+            margin-bottom: 10px;
+            color: var(--secondary-color);
+        }
+
+        .price-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--light-color);
+        }
+
+        /* Notice Styles */
+        .notice {
+            background-color: rgba(39, 174, 96, 0.9);
+            border: 2px solid #27ae60;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 20px 0;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .notice h4 {
+            margin-bottom: 10px;
+            color: white;
+        }
+
+        .address {
+            background-color: rgba(231, 76, 60, 0.9);
+            border: 2px solid #e74c3c;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 20px 0;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .address h4 {
+            margin-bottom: 10px;
+            color: white;
+        }
+
+        /* Footer Styles */
+        footer {
+            background-color: rgba(44, 62, 80, 0.9);
+            padding: 20px 0;
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+            
+            .booking-form {
+                grid-template-columns: 1fr;
+            }
+            
+            .price-display {
+                grid-template-columns: 1fr;
+            }
+            
+            .price-inputs {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">الدار جنە</div>
+                <div class="settings">
+                    <div class="language-selector">
+                        <select id="languageSelect">
+                            <option value="ku">کوردی</option>
+                            <option value="ar">العربية</option>
+                            <option value="en">English</option>
+                        </select>
+                    </div>
+                    <div class="user-info" id="userInfo">
+                        <!-- User info will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Login Form -->
+    <div class="login-container" id="loginContainer">
+        <div class="login-form">
+            <h2 id="loginTitle">چوونەژوورەوە</h2>
+            <div class="form-group">
+                <label for="username" id="usernameLabel">ناوی بەکارهێنەر</label>
+                <input type="text" id="username" placeholder="ناوی بەکارهێنەر">
+            </div>
+            <div class="form-group">
+                <label for="password" id="passwordLabel">پاسۆرد</label>
+                <input type="password" id="password" placeholder="پاسۆرد">
+            </div>
+            <button class="login-btn" id="loginBtn">چوونەژوورەوە</button>
+            <div class="register-link">
+                <a href="#" id="registerLink">تۆمارکردنی نوێ</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Registration Form -->
+    <div class="login-container" id="registerContainer" style="display: none;">
+        <div class="login-form">
+            <h2 id="registerTitle">تۆمارکردنی نوێ</h2>
+            <div class="form-group">
+                <label for="regUsername" id="regUsernameLabel">ناوی بەکارهێنەر</label>
+                <input type="text" id="regUsername" placeholder="ناوی بەکارهێنەر">
+            </div>
+            <div class="form-group">
+                <label for="regPassword" id="regPasswordLabel">پاسۆرد</label>
+                <input type="password" id="regPassword" placeholder="پاسۆرد">
+            </div>
+            <button class="login-btn" id="registerBtn">تۆمارکردن</button>
+            <div class="register-link">
+                <a href="#" id="backToLoginLink">گەڕانەوە بۆ چوونەژوورەوە</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content" id="mainContent">
+        <div class="container">
+            <!-- Admin Dashboard -->
+            <div class="admin-panel" id="adminPanel">
+                <h2>داشبۆردی سەرۆک</h2>
+                
+                <div class="price-controls">
+                    <h3>کۆنترۆلی نرخەکان</h3>
+                    <div class="price-inputs">
+                        <div class="price-input">
+                            <label for="passPrice">نرخی پاس</label>
+                            <input type="number" id="passPrice" value="150000">
+                        </div>
+                        <div class="price-input">
+                            <label for="airplanePrice">نرخی فڕۆکە</label>
+                            <input type="number" id="airplanePrice" value="350000">
+                        </div>
+                        <div class="price-input">
+                            <label for="installmentPassPrice">نرخی قیستی پاس</label>
+                            <input type="number" id="installmentPassPrice" value="180000">
+                        </div>
+                        <div class="price-input">
+                            <label for="installmentAirplanePrice">نرخی قیستی فڕۆکە</label>
+                            <input type="number" id="installmentAirplanePrice" value="400000">
+                        </div>
+                    </div>
+                    <button class="update-prices-btn" id="updatePricesBtn">نوێکردنەوەی نرخەکان</button>
+                </div>
+                
+                <div class="card">
+                    <h3>داواکاریەکان</h3>
+                    <table class="requests-table">
+                        <thead>
+                            <tr>
+                                <th>ناوی بەکارهێنەر</th>
+                                <th>جۆری داواکاری</th>
+                                <th>نرخ</th>
+                                <th>پاسپۆرت</th>
+                                <th>وێنە</th>
+                                <th>کاتی داواکاری</th>
+                            </tr>
+                        </thead>
+                        <tbody id="requestsTableBody">
+                            <!-- Requests will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- User Dashboard -->
+            <div class="user-dashboard" id="userDashboard">
+                <h2>داشبۆردی بەکارهێنەر</h2>
+                
+                <div class="price-display">
+                    <div class="price-card">
+                        <h4>نرخی پاس</h4>
+                        <div class="price-value" id="displayPassPrice">150000</div>
+                    </div>
+                    <div class="price-card">
+                        <h4>نرخی فڕۆکە</h4>
+                        <div class="price-value" id="displayAirplanePrice">350000</div>
+                    </div>
+                    <div class="price-card">
+                        <h4>نرخی قیستی پاس</h4>
+                        <div class="price-value" id="displayInstallmentPassPrice">180000</div>
+                    </div>
+                    <div class="price-card">
+                        <h4>نرخی قیستی فڕۆکە</h4>
+                        <div class="price-value" id="displayInstallmentAirplanePrice">400000</div>
+                    </div>
+                </div>
+                
+                <!-- Notice for installment -->
+                <div class="notice" id="installmentNotice">
+                    <h4>تێبینی</h4>
+                    <p>ئەگەر قیستی پاس یان قیستی فڕۆکە دەتەوێ، پاسپۆرت و پارەکەت بهێنە بۆ کۆمپانیا</p>
+                </div>
+                
+                <!-- Address -->
+                <div class="address">
+                    <h4>ناونیشان</h4>
+                    <p>جادەی ئەلبان بەرامبەر یاریگای ١٦ی ئاب</p>
+                </div>
+                
+                <div class="card">
+                    <h3>داواکاری نوێ</h3>
+                    <form class="booking-form" id="bookingForm">
+                        <div class="form-control">
+                            <label for="fullName">ناوی تەواو</label>
+                            <input type="text" id="fullName" required>
+                        </div>
+                        <div class="form-control">
+                            <label for="age">تەمەن</label>
+                            <input type="number" id="age" required>
+                        </div>
+                        <div class="form-control">
+                            <label for="bookingType">جۆری داواکاری</label>
+                            <select id="bookingType" required>
+                                <option value="pass">پاس</option>
+                                <option value="airplane">فڕۆکە</option>
+                                <option value="installment_pass">قیستی پاس</option>
+                                <option value="installment_airplane">قیستی فڕۆکە</option>
+                            </select>
+                        </div>
+                        <div class="form-control">
+                            <label for="passport">پاسپۆرت</label>
+                            <input type="file" id="passport" accept=".jpg,.jpeg,.png,.pdf">
+                        </div>
+                        <div class="form-control">
+                            <label for="photo">وێنە</label>
+                            <input type="file" id="photo" accept=".jpg,.jpeg,.png">
+                        </div>
+                        <div class="form-control full-width">
+                            <button type="submit" class="submit-btn">ناردنی داواکاری</button>
+                        </div>
+                    </form>
+                </div>
+                
+                <div class="card">
+                    <h3>مێژووی داواکاریەکانم</h3>
+                    <table class="requests-table">
+                        <thead>
+                            <tr>
+                                <th>جۆری داواکاری</th>
+                                <th>نرخ</th>
+                                <th>کاتی داواکاری</th>
+                                <th>دۆخی داواکاری</th>
+                            </tr>
+                        </thead>
+                        <tbody id="userRequestsTableBody">
+                            <!-- User requests will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>سیستم رزرواسیون سەفەر - 2023</p>
+        </div>
+    </footer>
+
+    <script>
+        // Language translations
+        const translations = {
+            ku: {
+                loginTitle: "چوونەژوورەوە",
+                usernameLabel: "ناوی بەکارهێنەر",
+                passwordLabel: "پاسۆرد",
+                loginBtn: "چوونەژوورەوە",
+                registerLink: "تۆمارکردنی نوێ",
+                registerTitle: "تۆمارکردنی نوێ",
+                regUsernameLabel: "ناوی بەکارهێنەر",
+                regPasswordLabel: "پاسۆرد",
+                registerBtn: "تۆمارکردن",
+                backToLoginLink: "گەڕانەوە بۆ چوونەژوورەوە",
+                adminDashboard: "داشبۆردی سەرۆک",
+                userDashboard: "داشبۆردی بەکارهێنەر",
+                priceControls: "کۆنترۆلی نرخەکان",
+                passPrice: "نرخی پاس",
+                airplanePrice: "نرخی فڕۆکە",
+                installmentPassPrice: "نرخی قیستی پاس",
+                installmentAirplanePrice: "نرخی قیستی فڕۆکە",
+                updatePricesBtn: "نوێکردنەوەی نرخەکان",
+                requests: "داواکاریەکان",
+                newRequest: "داواکاری نوێ",
+                fullName: "ناوی تەواو",
+                age: "تەمەن",
+                bookingType: "جۆری داواکاری",
+                passport: "پاسپۆرت",
+                photo: "وێنە",
+                submitRequest: "ناردنی داواکاری",
+                requestHistory: "مێژووی داواکاریەکانم",
+                requestType: "جۆری داواکاری",
+                price: "نرخ",
+                requestTime: "کاتی داواکاری",
+                status: "دۆخی داواکاری",
+                user: "ناوی بەکارهێنەر",
+                logout: "چوونەدەرەوە",
+                noticeTitle: "تێبینی",
+                noticeText: "ئەگەر قیستی پاس یان قیستی فڕۆکە دەتەوێ، پاسپۆرت و پارەکەت بهێنە بۆ کۆمپانیا",
+                addressTitle: "ناونیشان",
+                addressText: "جادەی ئەلبان بەرامبەر یاریگای ١٦ی ئاب"
+            },
+            ar: {
+                loginTitle: "تسجيل الدخول",
+                usernameLabel: "اسم المستخدم",
+                passwordLabel: "كلمة المرور",
+                loginBtn: "تسجيل الدخول",
+                registerLink: "تسجيل جديد",
+                registerTitle: "تسجيل جديد",
+                regUsernameLabel: "اسم المستخدم",
+                regPasswordLabel: "كلمة المرور",
+                registerBtn: "تسجيل",
+                backToLoginLink: "العودة إلى تسجيل الدخول",
+                adminDashboard: "لوحة المدير",
+                userDashboard: "لوحة المستخدم",
+                priceControls: "التحكم بالأسعار",
+                passPrice: "سعر الباص",
+                airplanePrice: "سعر الطائرة",
+                installmentPassPrice: "سعر تقسيط الباص",
+                installmentAirplanePrice: "سعر تقسيط الطائرة",
+                updatePricesBtn: "تحديث الأسعار",
+                requests: "الطلبات",
+                newRequest: "طلب جديد",
+                fullName: "الاسم الكامل",
+                age: "العمر",
+                bookingType: "نوع الطلب",
+                passport: "جواز السفر",
+                photo: "صورة",
+                submitRequest: "إرسال الطلب",
+                requestHistory: "سجل طلباتي",
+                requestType: "نوع الطلب",
+                price: "السعر",
+                requestTime: "وقت الطلب",
+                status: "الحالة",
+                user: "اسم المستخدم",
+                logout: "تسجيل الخروج",
+                noticeTitle: "ملاحظة",
+                noticeText: "إذا كنت تريد تقسيط الباص أو الطائرة، أحضر جواز سفرك وأموالك إلى الشركة",
+                addressTitle: "العنوان",
+                addressText: "شارع الألبان مقابل ملعب 16 آب"
+            },
+            en: {
+                loginTitle: "Login",
+                usernameLabel: "Username",
+                passwordLabel: "Password",
+                loginBtn: "Login",
+                registerLink: "New Registration",
+                registerTitle: "New Registration",
+                regUsernameLabel: "Username",
+                regPasswordLabel: "Password",
+                registerBtn: "Register",
+                backToLoginLink: "Back to Login",
+                adminDashboard: "Admin Dashboard",
+                userDashboard: "User Dashboard",
+                priceControls: "Price Controls",
+                passPrice: "Pass Price",
+                airplanePrice: "Airplane Price",
+                installmentPassPrice: "Installment Pass Price",
+                installmentAirplanePrice: "Installment Airplane Price",
+                updatePricesBtn: "Update Prices",
+                requests: "Requests",
+                newRequest: "New Request",
+                fullName: "Full Name",
+                age: "Age",
+                bookingType: "Booking Type",
+                passport: "Passport",
+                photo: "Photo",
+                submitRequest: "Submit Request",
+                requestHistory: "My Request History",
+                requestType: "Request Type",
+                price: "Price",
+                requestTime: "Request Time",
+                status: "Status",
+                user: "Username",
+                logout: "Logout",
+                noticeTitle: "Notice",
+                noticeText: "If you want installment for pass or airplane, bring your passport and money to the company",
+                addressTitle: "Address",
+                addressText: "Alban Street, opposite 16 Ab Stadium"
+            }
+        };
+
+        // Application state
+        let currentUser = null;
+        let isAdmin = false;
+        let currentLanguage = 'ku';
+        let prices = {
+            pass: 150000,
+            airplane: 350000,
+            installment_pass: 180000,
+            installment_airplane: 400000
+        };
+        let requests = [];
+
+        // DOM elements
+        const loginContainer = document.getElementById('loginContainer');
+        const registerContainer = document.getElementById('registerContainer');
+        const mainContent = document.getElementById('mainContent');
+        const adminPanel = document.getElementById('adminPanel');
+        const userDashboard = document.getElementById('userDashboard');
+        const languageSelect = document.getElementById('languageSelect');
+        const userInfo = document.getElementById('userInfo');
+        const loginBtn = document.getElementById('loginBtn');
+        const registerBtn = document.getElementById('registerBtn');
+        const updatePricesBtn = document.getElementById('updatePricesBtn');
+        const bookingForm = document.getElementById('bookingForm');
+        const requestsTableBody = document.getElementById('requestsTableBody');
+        const userRequestsTableBody = document.getElementById('userRequestsTableBody');
+        const installmentNotice = document.getElementById('installmentNotice');
+
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', initializeApp);
+        languageSelect.addEventListener('change', changeLanguage);
+        loginBtn.addEventListener('click', login);
+        registerBtn.addEventListener('click', register);
+        document.getElementById('registerLink').addEventListener('click', showRegisterForm);
+        document.getElementById('backToLoginLink').addEventListener('click', showLoginForm);
+        updatePricesBtn.addEventListener('click', updatePrices);
+        bookingForm.addEventListener('submit', submitBooking);
+
+        // Initialize the application
+        function initializeApp() {
+            // Set initial language
+            changeLanguage();
+            
+            // Check if user is already logged in (for demo purposes)
+            // In a real app, you would check from localStorage or session
+        }
+
+        // Change language
+        function changeLanguage() {
+            currentLanguage = languageSelect.value;
+            document.documentElement.lang = currentLanguage;
+            document.documentElement.dir = currentLanguage === 'en' ? 'ltr' : 'rtl';
+            
+            // Update all text content based on selected language
+            updateTextContent();
+        }
+
+        // Update all text content based on current language
+        function updateTextContent() {
+            const lang = translations[currentLanguage];
+            
+            // Login form
+            document.getElementById('loginTitle').textContent = lang.loginTitle;
+            document.getElementById('usernameLabel').textContent = lang.usernameLabel;
+            document.getElementById('passwordLabel').textContent = lang.passwordLabel;
+            document.getElementById('loginBtn').textContent = lang.loginBtn;
+            document.getElementById('registerLink').textContent = lang.registerLink;
+            
+            // Registration form
+            document.getElementById('registerTitle').textContent = lang.registerTitle;
+            document.getElementById('regUsernameLabel').textContent = lang.regUsernameLabel;
+            document.getElementById('regPasswordLabel').textContent = lang.regPasswordLabel;
+            document.getElementById('registerBtn').textContent = lang.registerBtn;
+            document.getElementById('backToLoginLink').textContent = lang.backToLoginLink;
+            
+            // Admin panel
+            if (adminPanel.style.display !== 'none') {
+                document.querySelector('#adminPanel h2').textContent = lang.adminDashboard;
+                document.querySelector('.price-controls h3').textContent = lang.priceControls;
+                document.querySelector('label[for="passPrice"]').textContent = lang.passPrice;
+                document.querySelector('label[for="airplanePrice"]').textContent = lang.airplanePrice;
+                document.querySelector('label[for="installmentPassPrice"]').textContent = lang.installmentPassPrice;
+                document.querySelector('label[for="installmentAirplanePrice"]').textContent = lang.installmentAirplanePrice;
+                document.getElementById('updatePricesBtn').textContent = lang.updatePricesBtn;
+                document.querySelector('#adminPanel .card h3').textContent = lang.requests;
+                
+                // Update table headers
+                const adminTableHeaders = document.querySelectorAll('#adminPanel .requests-table th');
+                adminTableHeaders[0].textContent = lang.user;
+                adminTableHeaders[1].textContent = lang.requestType;
+                adminTableHeaders[2].textContent = lang.price;
+                adminTableHeaders[3].textContent = lang.passport;
+                adminTableHeaders[4].textContent = lang.photo;
+                adminTableHeaders[5].textContent = lang.requestTime;
+            }
+            
+            // User dashboard
+            if (userDashboard.style.display !== 'none') {
+                document.querySelector('#userDashboard h2').textContent = lang.userDashboard;
+                document.querySelector('#userDashboard .card h3').textContent = lang.newRequest;
+                document.querySelector('#userDashboard .card:last-child h3').textContent = lang.requestHistory;
+                
+                // Update form labels
+                document.querySelector('label[for="fullName"]').textContent = lang.fullName;
+                document.querySelector('label[for="age"]').textContent = lang.age;
+                document.querySelector('label[for="bookingType"]').textContent = lang.bookingType;
+                document.querySelector('label[for="passport"]').textContent = lang.passport;
+                document.querySelector('label[for="photo"]').textContent = lang.photo;
+                document.querySelector('.submit-btn').textContent = lang.submitRequest;
+                
+                // Update table headers
+                const userTableHeaders = document.querySelectorAll('#userDashboard .requests-table th');
+                userTableHeaders[0].textContent = lang.requestType;
+                userTableHeaders[1].textContent = lang.price;
+                userTableHeaders[2].textContent = lang.requestTime;
+                userTableHeaders[3].textContent = lang.status;
+                
+                // Update notice and address
+                document.querySelector('#installmentNotice h4').textContent = lang.noticeTitle;
+                document.querySelector('#installmentNotice p').textContent = lang.noticeText;
+                document.querySelector('.address h4').textContent = lang.addressTitle;
+                document.querySelector('.address p').textContent = lang.addressText;
+            }
+            
+            // Update user info if logged in
+            if (currentUser) {
+                updateUserInfo();
+            }
+        }
+
+        // Show registration form
+        function showRegisterForm(e) {
+            e.preventDefault();
+            loginContainer.style.display = 'none';
+            registerContainer.style.display = 'flex';
+        }
+
+        // Show login form
+        function showLoginForm(e) {
+            e.preventDefault();
+            registerContainer.style.display = 'none';
+            loginContainer.style.display = 'flex';
+        }
+
+        // Login function
+        function login() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            // Check if admin
+            if (username === 'pshtiwan' && password === 'p6561414') {
+                currentUser = username;
+                isAdmin = true;
+                showMainContent();
+                return;
+            }
+            
+            // Check if regular user (in a real app, you would check against a database)
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            const user = users.find(u => u.username === username && u.password === password);
+            
+            if (user) {
+                currentUser = username;
+                isAdmin = false;
+                showMainContent();
+            } else {
+                alert(currentLanguage === 'ku' ? 'ناوی بەکارهێنەر یان پاسۆرد هەڵەیە' : 
+                      currentLanguage === 'ar' ? 'اسم المستخدم أو كلمة المرور غير صحيحة' :
+                      'Username or password is incorrect');
+            }
+        }
+
+        // Register function
+        function register() {
+            const username = document.getElementById('regUsername').value;
+            const password = document.getElementById('regPassword').value;
+            
+            if (!username || !password) {
+                alert(currentLanguage === 'ku' ? 'تکایە هەموو خانەکان پڕ بکەرەوە' : 
+                      currentLanguage === 'ar' ? 'يرجى ملء جميع الحقول' :
+                      'Please fill all fields');
+                return;
+            }
+            
+            // Save user to localStorage (in a real app, you would send to a server)
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            
+            // Check if username already exists
+            if (users.find(u => u.username === username)) {
+                alert(currentLanguage === 'ku' ? 'ئەم ناوی بەکارهێنەرە هەیە' : 
+                      currentLanguage === 'ar' ? 'اسم المستخدم موجود بالفعل' :
+                      'Username already exists');
+                return;
+            }
+            
+            users.push({ username, password });
+            localStorage.setItem('users', JSON.stringify(users));
+            
+            alert(currentLanguage === 'ku' ? 'تۆمارکرا بە سەرکەوتویی' : 
+                  currentLanguage === 'ar' ? 'تم التسجيل بنجاح' :
+                  'Registered successfully');
+            
+            showLoginForm({ preventDefault: () => {} });
+        }
+
+        // Show main content after login
+        function showMainContent() {
+            loginContainer.style.display = 'none';
+            registerContainer.style.display = 'none';
+            mainContent.style.display = 'block';
+            
+            if (isAdmin) {
+                adminPanel.style.display = 'block';
+                userDashboard.style.display = 'none';
+                loadAdminData();
+            } else {
+                adminPanel.style.display = 'none';
+                userDashboard.style.display = 'block';
+                loadUserData();
+            }
+            
+            updateUserInfo();
+            updateTextContent();
+        }
+
+        // Update user info in header
+        function updateUserInfo() {
+            const lang = translations[currentLanguage];
+            userInfo.innerHTML = `
+                <span>${currentUser}</span>
+                <button class="logout-btn" id="logoutBtn">${lang.logout}</button>
+            `;
+            document.getElementById('logoutBtn').addEventListener('click', logout);
+        }
+
+        // Logout function
+        function logout() {
+            currentUser = null;
+            isAdmin = false;
+            mainContent.style.display = 'none';
+            loginContainer.style.display = 'flex';
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+            userInfo.innerHTML = '';
+        }
+
+        // Load admin data
+        function loadAdminData() {
+            // Load prices from localStorage
+            const savedPrices = JSON.parse(localStorage.getItem('prices'));
+            if (savedPrices) {
+                prices = savedPrices;
+                document.getElementById('passPrice').value = prices.pass;
+                document.getElementById('airplanePrice').value = prices.airplane;
+                document.getElementById('installmentPassPrice').value = prices.installment_pass;
+                document.getElementById('installmentAirplanePrice').value = prices.installment_airplane;
+            }
+            
+            // Load requests from localStorage
+            requests = JSON.parse(localStorage.getItem('requests') || '[]');
+            updateRequestsTable();
+        }
+
+        // Load user data
+        function loadUserData() {
+            // Load prices from localStorage
+            const savedPrices = JSON.parse(localStorage.getItem('prices'));
+            if (savedPrices) {
+                prices = savedPrices;
+            }
+            
+            // Update price display
+            document.getElementById('displayPassPrice').textContent = prices.pass;
+            document.getElementById('displayAirplanePrice').textContent = prices.airplane;
+            document.getElementById('displayInstallmentPassPrice').textContent = prices.installment_pass;
+            document.getElementById('displayInstallmentAirplanePrice').textContent = prices.installment_airplane;
+            
+            // Load user requests
+            requests = JSON.parse(localStorage.getItem('requests') || '[]');
+            const userRequests = requests.filter(req => req.user === currentUser);
+            updateUserRequestsTable(userRequests);
+        }
+
+        // Update prices
+        function updatePrices() {
+            prices.pass = parseInt(document.getElementById('passPrice').value);
+            prices.airplane = parseInt(document.getElementById('airplanePrice').value);
+            prices.installment_pass = parseInt(document.getElementById('installmentPassPrice').value);
+            prices.installment_airplane = parseInt(document.getElementById('installmentAirplanePrice').value);
+            
+            // Save to localStorage
+            localStorage.setItem('prices', JSON.stringify(prices));
+            
+            alert(currentLanguage === 'ku' ? 'نرخەکان نوێکرانەوە' : 
+                  currentLanguage === 'ar' ? 'تم تحديث الأسعار' :
+                  'Prices updated');
+        }
+
+        // Submit booking
+        function submitBooking(e) {
+            e.preventDefault();
+            
+            const fullName = document.getElementById('fullName').value;
+            const age = document.getElementById('age').value;
+            const bookingType = document.getElementById('bookingType').value;
+            const passportFile = document.getElementById('passport').files[0];
+            const photoFile = document.getElementById('photo').files[0];
+            
+            if (!fullName || !age || !bookingType) {
+                alert(currentLanguage === 'ku' ? 'تکایە هەموو خانە پێویستەکان پڕ بکەرەوە' : 
+                      currentLanguage === 'ar' ? 'يرجى ملء جميع الحقول المطلوبة' :
+                      'Please fill all required fields');
+                return;
+            }
+            
+            // Create request object
+            const request = {
+                id: Date.now(),
+                user: currentUser,
+                fullName,
+                age,
+                type: bookingType,
+                price: prices[bookingType],
+                timestamp: new Date().toLocaleString(),
+                status: 'Pending'
+            };
+            
+            // Add to requests array
+            requests.push(request);
+            
+            // Save to localStorage
+            localStorage.setItem('requests', JSON.stringify(requests));
+            
+            // Update user requests table
+            const userRequests = requests.filter(req => req.user === currentUser);
+            updateUserRequestsTable(userRequests);
+            
+            // Reset form
+            bookingForm.reset();
+            
+            alert(currentLanguage === 'ku' ? 'داواکاریەکەت نێردرا' : 
+                  currentLanguage === 'ar' ? 'تم إرسال طلبك' :
+                  'Your request has been submitted');
+        }
+
+        // Update requests table for admin
+        function updateRequestsTable() {
+            requestsTableBody.innerHTML = '';
+            
+            requests.forEach(request => {
+                const row = document.createElement('tr');
+                
+                // Determine request type text based on language
+                let typeText = '';
+                if (currentLanguage === 'ku') {
+                    typeText = request.type === 'pass' ? 'پاس' : 
+                              request.type === 'airplane' ? 'فڕۆکە' :
+                              request.type === 'installment_pass' ? 'قیستی پاس' : 'قیستی فڕۆکە';
+                } else if (currentLanguage === 'ar') {
+                    typeText = request.type === 'pass' ? 'باص' : 
+                              request.type === 'airplane' ? 'طائرة' :
+                              request.type === 'installment_pass' ? 'تقسيط باص' : 'تقسيط طائرة';
+                } else {
+                    typeText = request.type === 'pass' ? 'Pass' : 
+                              request.type === 'airplane' ? 'Airplane' :
+                              request.type === 'installment_pass' ? 'Installment Pass' : 'Installment Airplane';
+                }
+                
+                row.innerHTML = `
+                    <td>${request.user}</td>
+                    <td>${typeText}</td>
+                    <td>${request.price}</td>
+                    <td>${request.passportFile ? '✓' : '✗'}</td>
+                    <td>${request.photoFile ? '✓' : '✗'}</td>
+                    <td>${request.timestamp}</td>
+                `;
+                
+                requestsTableBody.appendChild(row);
+            });
+        }
+
+        // Update user requests table
+        function updateUserRequestsTable(userRequests) {
+            userRequestsTableBody.innerHTML = '';
+            
+            userRequests.forEach(request => {
+                const row = document.createElement('tr');
+                
+                // Determine request type text based on language
+                let typeText = '';
+                if (currentLanguage === 'ku') {
+                    typeText = request.type === 'pass' ? 'پاس' : 
+                              request.type === 'airplane' ? 'فڕۆکە' :
+                              request.type === 'installment_pass' ? 'قیستی پاس' : 'قیستی فڕۆکە';
+                } else if (currentLanguage === 'ar') {
+                    typeText = request.type === 'pass' ? 'باص' : 
+                              request.type === 'airplane' ? 'طائرة' :
+                              request.type === 'installment_pass' ? 'تقسيط باص' : 'تقسيط طائرة';
+                } else {
+                    typeText = request.type === 'pass' ? 'Pass' : 
+                              request.type === 'airplane' ? 'Airplane' :
+                              request.type === 'installment_pass' ? 'Installment Pass' : 'Installment Airplane';
+                }
+                
+                // Determine status text based on language
+                let statusText = '';
+                if (currentLanguage === 'ku') {
+                    statusText = request.status === 'Pending' ? 'چاوەڕوان' : 
+                                request.status === 'Approved' ? 'پەسەندکراو' : 'ڕەتکراوە';
+                } else if (currentLanguage === 'ar') {
+                    statusText = request.status === 'Pending' ? 'قيد الانتظار' : 
+                                request.status === 'Approved' ? 'مقبول' : 'مرفوض';
+                } else {
+                    statusText = request.status;
+                }
+                
+                row.innerHTML = `
+                    <td>${typeText}</td>
+                    <td>${request.price}</td>
+                    <td>${request.timestamp}</td>
+                    <td>${statusText}</td>
+                `;
+                
+                userRequestsTableBody.appendChild(row);
+            });
+        }
+    </script>
+</body>
+</html>
